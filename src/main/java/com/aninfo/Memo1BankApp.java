@@ -1,7 +1,9 @@
 package com.aninfo;
 
 import com.aninfo.model.Account;
+import com.aninfo.model.BankTransaction;
 import com.aninfo.service.AccountService;
+import com.aninfo.service.BankTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -26,6 +29,9 @@ public class Memo1BankApp {
 
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private BankTransactionService BTS;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Memo1BankApp.class, args);
@@ -73,6 +79,22 @@ public class Memo1BankApp {
 	@PutMapping("/accounts/{cbu}/deposit")
 	public Account deposit(@PathVariable Long cbu, @RequestParam Double sum) {
 		return accountService.deposit(cbu, sum);
+	}
+
+	@GetMapping("/accounts/transactions/{cbu}")
+	public List<BankTransaction> getTransactionsByCbu(@RequestParam Long cbu){
+		return BTS.getBankTransactionsByCbu(cbu);
+	}
+
+	@GetMapping("/accounts/transactions/{id}")
+	public ResponseEntity<BankTransaction> getTransactionById(@RequestParam Long id){
+		Optional<BankTransaction> obt = BTS.getBankTransactionById(id);
+		return ResponseEntity.of(obt);
+	}
+
+	@DeleteMapping("/accounts/transactions/{id}")
+	public void deleteTransactionsById(@RequestParam Long id){
+		BTS.deleteBankTransactionById(id);
 	}
 
 	@Bean
